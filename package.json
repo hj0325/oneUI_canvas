@@ -1,0 +1,26 @@
+{
+  "name": "oneui-gradient-template",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "extract-preview": "node scripts/extract-theme-preview.js",
+    "predev": "node scripts/extract-theme-preview.js",
+    "prebuild": "node scripts/extract-theme-preview.js",
+    "dev": "next dev -H 127.0.0.1 -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint",
+    "legacy:dev": "node scripts/dev-preview.js",
+    "preview": "yarn dev"
+  },
+  "dependencies": {
+    "next": "14",
+    "react": "18",
+    "react-dom": "18"
+  },
+  "devDependencies": {
+    "eslint": "^10.3.0",
+    "eslint-config-next": "14",
+    "serve": "^14.2.6"
+  }
+}

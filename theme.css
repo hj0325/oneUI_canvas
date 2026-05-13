@@ -1,0 +1,96 @@
+/*!
+ * 그라디언트 — One UI GenUI theme
+ * Base: gradient · Exported: 2026-05-13T10:08:19.372Z
+ *
+ * Edit any --variable below. Save as theme.css and re-import
+ * via /customize → Import HTML to register a new theme.
+ *
+ * Optional metadata (parsed by the importer):
+ *   oneui-theme: { "name": "My Theme", "author": "you", "baseThemeId": "gradient" }
+ */
+
+:root {
+  /* ── Typography ── */
+  --font-family-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family-mono: 'Space Mono', 'SF Mono', Menlo, monospace;
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-md: 15px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-display: 32px;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --letter-spacing-tight: -0.5px;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.5px;
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.45;
+  --line-height-relaxed: 1.6;
+
+  /* ── Spacing scale ── */
+  --space-xxs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* ── Composition (screen-level) ── */
+  --screen-padding-v: 10px;
+  --screen-padding-h: 12px;
+  --gap-screen: 16px;
+  --gap-cards: 12px;
+  --container-margin-bottom: 12px;
+  --screen-grid-columns: 1;
+  --screen-grid-gap: 16px;
+
+  /* ── Page ── */
+
+  /* ── Card globals ── */
+  --card-radius: 36px;
+  --card-padding-v: 14px;
+  --card-padding-h: 16px;
+  --card-gap: 6px;
+
+  /* ── Weather card ── */
+  --card-weather-accent: #FBBF24;
+  --card-weather-temp-color: #fff;
+  --card-weather-temp-size: 52px;
+  --card-weather-temp-weight: 600;
+  --card-weather-temp-letterspacing: -1.5px;
+  --card-weather-icon-size: 44px;
+
+  /* ── Calendar card ── */
+  --card-calendar-accent: #A78BFA;
+  --card-calendar-time-size: 22px;
+  --card-calendar-time-weight: 600;
+
+  /* ── Reminder card ── */
+  --card-reminder-accent: #F59E0B;
+  --card-reminder-task-size: 16px;
+
+  /* ── Message card ── */
+  --card-message-avatar-grad: linear-gradient(135deg,#34D399,#10B981);
+  --card-message-avatar-size: 32px;
+
+  /* ── ETA card ── */
+  --card-eta-accent: #14B8A6;
+  --card-eta-size: 40px;
+  --card-eta-icon-size: 32px;
+
+  /* ── Navigation now-bar ── */
+  --card-nav-accent: #14B8A6;
+  --card-nav-distance-size: 22px;
+  --card-nav-arrow-bg: rgba(20,184,166,0.25);
+
+  /* ── AI notification ── */
+  --card-ai-grad: linear-gradient(120deg, rgba(102,161,243,0.45) 0%, rgba(167,139,250,0.45) 50%, rgba(34,201,166,0.45) 100%);
+  --card-ai-shimmer-speed: 3.6s;
+
+  /* ── Input summary card ── */
+  --card-input-topic-size: 20px;
+}

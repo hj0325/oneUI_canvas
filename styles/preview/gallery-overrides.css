@@ -1,0 +1,25 @@
+/* Source of truth: edit this file, then run yarn extract-preview (theme-preview.html + lib/preview-body.js). */
+/* === [4] Gallery layout overrides ===================================== */
+html, body.tp-page { margin: 0; padding: 0; background: var(--page-bg, #0a0a0c); color: var(--text-primary, #efeef2); font-family: var(--font-family-body, "Inter", sans-serif); line-height: var(--line-height-normal, 1.45); min-height: 100vh; overflow-x: hidden; overflow-y: auto; }
+body.tp-page * { box-sizing: border-box; }
+body.tp-page .tp-shell { max-width: 1480px; margin: 0 auto; padding: 56px 48px 96px; display: block; }
+body.tp-page .tp-meta { margin: 0 0 28px; display: block; }
+body.tp-page .tp-meta h1 { font-family: var(--font-family-display, "Inter", sans-serif); font-size: 34px; font-weight: 700; letter-spacing: -0.6px; margin: 0 0 8px; display: block; color: var(--text-primary, #efeef2); }
+body.tp-page .tp-meta p  { color: var(--text-secondary, rgba(239,238,242,0.7)); font-size: 14px; margin: 0; display: block; max-width: 760px; line-height: 1.55; }
+body.tp-page .tp-toc { display: flex; gap: 10px; flex-wrap: wrap; margin: 22px 0 36px; padding: 0; list-style: none; }
+body.tp-page .tp-toc a { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.10); color: var(--text-primary, #efeef2); text-decoration: none; font-size: 12.5px; font-weight: 500; transition: background 0.15s ease, border-color 0.15s ease; }
+body.tp-page .tp-toc a:hover { background: rgba(255,255,255,0.10); border-color: rgba(255,255,255,0.18); }
+body.tp-page .tp-toc a .count { color: var(--text-tertiary, rgba(239,238,242,0.50)); font-weight: 400; margin-left: 4px; }
+body.tp-page .tp-section { margin: 56px 0 0; padding: 36px 0 0; border-top: 1px solid rgba(255,255,255,0.08); display: block; }
+body.tp-page .tp-section > h2 { font-family: var(--font-family-display, "Inter", sans-serif); font-size: 22px; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.3px; display: block; color: var(--text-primary, #efeef2); }
+body.tp-page .tp-section > .tp-hint { color: var(--text-tertiary, rgba(239,238,242,0.55)); font-size: 13px; margin: 0 0 28px; max-width: 760px; display: block; line-height: 1.55; }
+body.tp-page .tp-cards-scope { background: var(--preview-bg, #2f6264); border-radius: 28px; padding: 24px; }
+body.tp-page .tp-cards-scope .preview-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; padding: 0; }
+body.tp-page .tp-screens-wrap { padding: 0; }
+body.tp-page .tp-screens-wrap .preview-screen-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+@media (max-width: 980px) { body.tp-page .tp-cards-scope .preview-grid, body.tp-page .tp-screens-wrap .preview-screen-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } body.tp-page .tp-shell { padding: 40px 24px 80px; } }
+@media (max-width: 620px) { body.tp-page .tp-cards-scope .preview-grid, body.tp-page .tp-screens-wrap .preview-screen-grid { grid-template-columns: 1fr; } body.tp-page .tp-shell { padding: 28px 16px 80px; } }
+/* Components page has its own design system on a light surface — keep it isolated visually */
+body.tp-page .tp-components-host { background: #f5f6f7; color: #111; border-radius: 24px; padding: 16px 24px 40px; margin: 0; }
+body.tp-page .tp-components-host .section { padding: 36px 0; margin: 0; background: transparent; }
+body.tp-page .tp-components-host .footer, body.tp-page .tp-components-host .nav, body.tp-page .tp-components-host .hero { display: none !important; }
