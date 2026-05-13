@@ -381,6 +381,224 @@
        respects. */
     zoom: 0.55;
   }
+  /* Glance: Figma 임베드가 더 크게 보이도록 이 프레임만 확대 */
+  .preview-phone-frame:has(.glance-flow-host) .preview-phone-canvas {
+    zoom: 0.72;
+  }
+  .preview-phone-canvas > .glance-flow-host {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    width: 100%;
+  }
+  .glance-flow-host > .glance-flow {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--card-radius, 20px);
+    overflow: hidden;
+    /* 회색 단일 레이어: 프레임 전체(라운드 안)를 한 번에 덮음 — 움직이지 않음 */
+    background-color: #262626;
+    isolation: isolate;
+    user-select: none;
+    -webkit-user-drag: none;
+    /* concerts 타일(피그마) 왼쪽 위 모서리 — 컴포넌트 5를 그 바로 위에 붙일 때 조정 */
+    --glance-concerts-tile-x: 18px;
+    --glance-concerts-tile-y: 302px;
+    --glance-c5-gap: 12px;
+    --glance-c5-size: 135.828px;
+    --glance-c5-expanded-width: calc(var(--glance-c5-size) * 340 / 168);
+  }
+  .glance-flow-host > .glance-flow::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    background: #262626;
+    pointer-events: none;
+  }
+  .glance-flow .component-1,
+  .glance-flow .component-2,
+  .glance-flow .component-3 {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    min-height: 0;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+  /* 피그마 임베드 — 위치 오프셋 없음(기본 위치) */
+  .glance-flow .glance-embed-shift {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .glance-flow .glance-embed-shift iframe {
+    flex: 1;
+    min-height: 200px;
+    width: 100%;
+    border: 0;
+    display: block;
+    pointer-events: none;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  /* Glance 컴포넌트 1·2·3 — 동일 scale·오프셋 (임베드 비율 맞춤) */
+  .glance-flow .glance-embed-shift[data-figma-frame="2085670987"],
+  .glance-flow .component-2 .glance-embed-shift,
+  .glance-flow .component-3 .glance-embed-shift {
+    transform: scale(1.5) translateX(6px);
+    transform-origin: center center;
+  }
+  /* Glance: concerts(피그마) 타일 왼쪽 정렬 기준 — 임베드와 동일 scale로 맞춤 */
+  .glance-flow > .glance-embed-align-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    transform: scale(1.5) translateX(6px);
+    transform-origin: center center;
+  }
+  .glance-flow > .glance-embed-align-layer .component-5 {
+    position: absolute;
+    left: calc(var(--glance-concerts-tile-x) + 60px + 90px - 40px - 20px + 2px);
+    top: calc(var(--glance-concerts-tile-y) - var(--glance-c5-size) - var(--glance-c5-gap) + 70px + 80px + 150px + 300px);
+    width: var(--glance-c5-size);
+    height: var(--glance-c5-size);
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+    pointer-events: auto;
+  }
+  .glance-flow > .glance-embed-align-layer .component-5.glance-c5--expanded {
+    width: var(--glance-c5-expanded-width);
+    height: var(--glance-c5-size);
+  }
+  .glance-flow > .glance-embed-align-layer .component-5 .glance-c5-toggle {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    line-height: 0;
+    border-radius: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .glance-flow > .glance-embed-align-layer .component-5 .glance-c5-toggle:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--text-primary, #fff) 55%, transparent);
+    outline-offset: 2px;
+  }
+  .glance-flow > .glance-embed-align-layer .component-5 .glance-c5-face {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .glance-flow > .glance-embed-align-layer .component-5 .glance-c5-face--expanded {
+    display: none;
+  }
+  .glance-flow > .glance-embed-align-layer .component-5.glance-c5--expanded .glance-c5-face--collapsed {
+    display: none;
+  }
+  .glance-flow > .glance-embed-align-layer .component-5.glance-c5--expanded .glance-c5-face--expanded {
+    display: block;
+  }
+  .glance-flow > .glance-embed-align-layer .component-5 .glance-card-168-svg,
+  .glance-flow > .glance-embed-align-layer .component-5 .glance-panel-340-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    object-fit: fill;
+    vertical-align: top;
+    pointer-events: none;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  /* 컴포넌트 4(now bar): 상단 오른쪽 · SVG 164×82 고정 */
+  .glance-flow > .component-4 {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    z-index: 3;
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+    pointer-events: none;
+    width: 164px;
+    height: 82px;
+    flex-shrink: 0;
+  }
+  .glance-flow > .component-4 .glance-now-bar-svg {
+    display: block;
+    width: 164px;
+    height: 82px;
+    max-width: none;
+    max-height: none;
+    object-fit: fill;
+    vertical-align: top;
+    pointer-events: none;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  .glance-flow[data-glance-step="1"] .component-1 {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .glance-flow[data-glance-step="1"] .component-2,
+  .glance-flow[data-glance-step="1"] .component-3 {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .glance-flow[data-glance-step="2"] .component-2 {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .glance-flow[data-glance-step="2"] .component-1,
+  .glance-flow[data-glance-step="2"] .component-3 {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .glance-flow[data-glance-step="3"] .component-3 {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  .glance-flow[data-glance-step="3"] .component-1,
+  .glance-flow[data-glance-step="3"] .component-2 {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .glance-advance-hit {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .glance-advance-hit:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--text-primary, #fff) 55%, transparent);
+    outline-offset: -2px;
+  }
   .preview-screen-group {
     display: flex;
     flex-direction: column;

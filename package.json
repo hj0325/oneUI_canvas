@@ -2,6 +2,9 @@
   "name": "oneui-gradient-template",
   "version": "1.0.0",
   "license": "MIT",
+  "engines": {
+    "node": ">=18.17.0"
+  },
   "scripts": {
     "extract-preview": "node scripts/extract-theme-preview.js",
     "predev": "node scripts/extract-theme-preview.js",
@@ -19,7 +22,7 @@
     "react-dom": "18"
   },
   "devDependencies": {
-    "eslint": "^10.3.0",
+    "eslint": "^8.57.0",
     "eslint-config-next": "14",
     "serve": "^14.2.6"
   }
