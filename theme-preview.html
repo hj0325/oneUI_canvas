@@ -2272,7 +2272,7 @@ input[id^="searchbar-"]::placeholder {
        respects. */
     zoom: 0.55;
   }
-  /* Glance: Figma 임베드가 더 크게 보이도록 이 프레임만 확대 */
+  /* Glance 프레임만 기존처럼 약간 확대 — 디모 요소·카드가 다른 시나리오 폰과 비슷한 체감 크기 */
   .preview-phone-frame:has(.glance-flow-host) .preview-phone-canvas {
     zoom: 0.72;
   }
@@ -2281,14 +2281,15 @@ input[id^="searchbar-"]::placeholder {
     min-height: 0;
     position: relative;
     width: 100%;
+    container-name: glance;
+    container-type: inline-size;
   }
   .glance-flow-host > .glance-flow {
     position: absolute;
     inset: 0;
     border-radius: var(--card-radius, 20px);
     overflow: hidden;
-    /* 회색 단일 레이어: 프레임 전체(라운드 안)를 한 번에 덮음 — 움직이지 않음 */
-    background-color: #262626;
+    background-color: transparent;
     isolation: isolate;
     user-select: none;
     -webkit-user-drag: none;
@@ -2296,67 +2297,170 @@ input[id^="searchbar-"]::placeholder {
     --glance-concerts-tile-x: 18px;
     --glance-concerts-tile-y: 302px;
     --glance-c5-gap: 12px;
-    --glance-c5-size: 135.828px;
+    --glance-c5-size: 100px;
     --glance-c5-expanded-width: calc(var(--glance-c5-size) * 340 / 168);
+
+    /* Media tile bounding box (keep “card” scale consistent across steps) */
+    --glance-player-margin: 14px;
+    --glance-player-bottom: 18px;
+    --glance-player-w: 168px;
+    --glance-player-h: 168px;
   }
+
+  .glance-flow[data-glance-step="1"] {
+    --glance-player-w: 168px;
+    --glance-player-h: 168px;
+  }
+  .glance-flow[data-glance-step="2"] {
+    --glance-player-w: 340px;
+    --glance-player-h: 168px;
+  }
+  .glance-flow[data-glance-step="3"] {
+    /* “bar” but still with margins (NOT full-bleed) */
+    --glance-player-w: 340px;
+    --glance-player-h: 168px;
+  }
+  /* 네이티브 카드 배경 오렌지; 예전 회색 레이어는 제거됨 */
   .glance-flow-host > .glance-flow::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    border-radius: inherit;
-    background: #262626;
-    pointer-events: none;
+    display: none;
   }
-  .glance-flow .component-1,
-  .glance-flow .component-2,
-  .glance-flow .component-3 {
+  /* ── 네이티브 Glance 카드 — 동일 DOM으로 레이아웃 연속 보간 ── */
+  /* 오렌지 미디어 카드만 슬롯 크기로 두고, 같은 폰 안 다른 위젯(now bar·C5)은 기존 줌·전체 캔버스 기준 유지 */
+  .glance-native-player {
+    box-sizing: border-box;
     position: absolute;
-    inset: 0;
+    left: var(--glance-player-margin);
+    bottom: var(--glance-player-bottom);
     z-index: 1;
-    min-height: 0;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
-  }
-  /* 피그마 임베드 — 위치 오프셋 없음(기본 위치) */
-  .glance-flow .glance-embed-shift {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    width: min(var(--glance-player-w), calc(100% - (var(--glance-player-margin) * 2)));
+    height: var(--glance-player-h);
+    transform: none;
     pointer-events: none;
+    transition:
+      padding 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+      width 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+      height 0.72s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .glance-flow .glance-embed-shift iframe {
-    flex: 1;
-    min-height: 200px;
+  .glance-flow[data-glance-step="1"] .glance-native-player { padding: clamp(5px, 2cqw, 9px); }
+  .glance-flow[data-glance-step="2"] .glance-native-player { padding: clamp(6px, 2.4cqw, 10px); }
+  .glance-flow[data-glance-step="3"] .glance-native-player { padding: clamp(4px, 1.6cqw, 8px); }
+  /* Music player SVG stack (exact fidelity) */
+  .glance-mp-stack {
+    position: relative;
     width: 100%;
-    border: 0;
-    display: block;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 32px;
+  }
+  .glance-mp-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    opacity: 0;
+    transition: opacity 120ms linear;
     pointer-events: none;
-    -webkit-user-drag: none;
     user-select: none;
+    -webkit-user-drag: none;
   }
-  /* Glance 컴포넌트 1·2·3 — 동일 scale·오프셋 (임베드 비율 맞춤) */
-  .glance-flow .glance-embed-shift[data-figma-frame="2085670987"],
-  .glance-flow .component-2 .glance-embed-shift,
-  .glance-flow .component-3 .glance-embed-shift {
-    transform: scale(1.5) translateX(6px);
-    transform-origin: center center;
+  .glance-flow[data-glance-step="1"] .glance-mp-svg[data-step="1"] { opacity: 1; }
+  .glance-flow[data-glance-step="2"] .glance-mp-svg[data-step="2"] { opacity: 1; }
+  .glance-flow[data-glance-step="3"] .glance-mp-svg[data-step="3"] { opacity: 1; }
+
+  .glance-np-artist,
+  .glance-np-sublabel {
+    display: block;
+    transition:
+      opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      font-size 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+      letter-spacing 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.72s cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: 0 50%;
   }
-  /* Glance: concerts(피그마) 타일 왼쪽 정렬 기준 — 임베드와 동일 scale로 맞춤 */
+  .glance-flow[data-glance-step="1"] .glance-np-artist {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    opacity: 1;
+    transform: none;
+  }
+  .glance-flow[data-glance-step="2"] .glance-np-artist {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    opacity: 1;
+    transform: none;
+  }
+  .glance-flow[data-glance-step="3"] .glance-np-artist {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    opacity: 1;
+    transform: none;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .glance-flow[data-glance-step="1"] .glance-np-sublabel {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.7);
+    letter-spacing: 0;
+  }
+  .glance-flow[data-glance-step="2"] .glance-np-sublabel {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.7);
+    letter-spacing: 0;
+  }
+  .glance-flow[data-glance-step="3"] .glance-np-sublabel {
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.7);
+  }
+  .glance-np-title {
+    margin: 0;
+    padding: 0;
+    font-weight: 800;
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+    transition:
+      font-size 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+      letter-spacing 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.72s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: 0 100%;
+  }
+  .glance-flow[data-glance-step="1"] .glance-np-title {
+    font-size: 34px;
+    transform: none;
+    margin-top: 14px;
+  }
+  .glance-flow[data-glance-step="2"] .glance-np-title {
+    font-size: 34px;
+    transform: none;
+    margin-top: 14px;
+  }
+  /* scrub spacing fixed for spec */
+  .glance-np-bottom { gap: 10px; }
+  .glance-np-times { justify-content: space-between; }
+  /* 피그마 타일 좌표 대신 카드 안 절대 위치 */
   .glance-flow > .glance-embed-align-layer {
     position: absolute;
     inset: 0;
     z-index: 3;
     pointer-events: none;
-    transform: scale(1.5) translateX(6px);
+    transform: none;
     transform-origin: center center;
   }
   .glance-flow > .glance-embed-align-layer .component-5 {
     position: absolute;
-    left: calc(var(--glance-concerts-tile-x) + 60px + 90px - 40px - 20px + 2px);
-    top: calc(var(--glance-concerts-tile-y) - var(--glance-c5-size) - var(--glance-c5-gap) + 70px + 80px + 150px + 300px);
+    left: clamp(8px, 2.5cqw, 14px);
+    top: clamp(40px, 11cqw, 56px);
+    bottom: auto;
     width: var(--glance-c5-size);
     height: var(--glance-c5-size);
     flex-shrink: 0;
@@ -2442,42 +2546,12 @@ input[id^="searchbar-"]::placeholder {
     -webkit-user-drag: none;
     user-select: none;
   }
-  .glance-flow[data-glance-step="1"] .component-1 {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-  }
-  .glance-flow[data-glance-step="1"] .component-2,
-  .glance-flow[data-glance-step="1"] .component-3 {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-  }
-  .glance-flow[data-glance-step="2"] .component-2 {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-  }
-  .glance-flow[data-glance-step="2"] .component-1,
-  .glance-flow[data-glance-step="2"] .component-3 {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-  }
-  .glance-flow[data-glance-step="3"] .component-3 {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-  }
-  .glance-flow[data-glance-step="3"] .component-1,
-  .glance-flow[data-glance-step="3"] .component-2 {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-  }
   .glance-advance-hit {
     position: absolute;
-    inset: 0;
+    left: var(--glance-player-margin);
+    bottom: var(--glance-player-bottom);
+    width: min(var(--glance-player-w), calc(100% - (var(--glance-player-margin) * 2)));
+    height: var(--glance-player-h);
     z-index: 2;
     margin: 0;
     padding: 0;
@@ -3738,24 +3812,14 @@ body.tp-page .tp-components-host .footer, body.tp-page .tp-components-host .nav,
 </div>
 <div class="glance-flow-host">
 <div class="glance-flow" id="glance-flow" data-glance-step="1">
-<div class="component-1" data-component-name="1">
-<button type="button" class="glance-advance-hit" data-advance-to="2" aria-label="컴포넌트 2로 전환"></button>
-<div class="glance-embed-shift" data-figma-frame="2085670987">
-<iframe draggable="false" title="1" aria-label="1" src="https://www.figma.com/embed?embed_host=share&amp;url=https%3A%2F%2Fwww.figma.com%2Fdesign%2F6HgK8REUy9aERRdoDxysuv%2F26-GenUI-%25EC%2582%25B0%25ED%2595%2599-03%3Fnode-id%3D2311-16890" loading="lazy" allowfullscreen=""></iframe>
+<div class="glance-native-player" data-component-name="glance-player" aria-label="예시 미디어 글랜스 카드" data-flip="player" aria-hidden="true">
+<div class="glance-mp-stack">
+<img class="glance-mp-svg" data-step="1" src="/glance/music-player-168.svg" alt="" width="168" height="168" decoding="async" draggable="false" />
+<img class="glance-mp-svg" data-step="2" src="/glance/music-player-340.svg" alt="" width="340" height="168" decoding="async" draggable="false" />
+<img class="glance-mp-svg" data-step="3" src="/glance/music-player-playlist-340.svg" alt="" width="340" height="168" decoding="async" draggable="false" />
 </div>
 </div>
-<div class="component-2" data-component-name="2">
-<button type="button" class="glance-advance-hit" data-advance-to="3" aria-label="컴포넌트 3로 전환"></button>
-<div class="glance-embed-shift">
-<iframe draggable="false" title="2" aria-label="2" src="https://www.figma.com/embed?embed_host=share&amp;url=https%3A%2F%2Fwww.figma.com%2Fdesign%2F6HgK8REUy9aERRdoDxysuv%2F26-GenUI-%25EC%2582%25B0%25ED%2595%2599-03%3Fnode-id%3D2311-16922" loading="lazy" allowfullscreen=""></iframe>
-</div>
-</div>
-<div class="component-3" data-component-name="3">
-<button type="button" class="glance-advance-hit" data-advance-to="1" aria-label="컴포넌트 1로 돌아가기"></button>
-<div class="glance-embed-shift">
-<iframe draggable="false" title="3" aria-label="3" src="https://www.figma.com/embed?embed_host=share&amp;url=https%3A%2F%2Fwww.figma.com%2Fdesign%2F6HgK8REUy9aERRdoDxysuv%2F26-GenUI-%25EC%2582%25B0%25ED%2595%2599-03%3Fnode-id%3D2311-17002" loading="lazy" allowfullscreen=""></iframe>
-</div>
-</div>
+<button type="button" class="glance-advance-hit" aria-label="Glance 카드 상태 전환"></button>
 <div class="glance-embed-align-layer">
 <div class="component-5" data-component-name="5">
 <button type="button" class="glance-c5-toggle" aria-expanded="false" aria-label="위젯 펼치기·접기">
@@ -5977,6 +6041,52 @@ body.tp-page .tp-components-host .footer, body.tp-page .tp-components-host .nav,
 (function(){
   var root=document.getElementById('glance-flow');
   if(!root)return;
+  var prefersReduced = false;
+  try { prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e) {}
+  var playing = false;
+
+  function qFlipNodes(){
+    return Array.prototype.slice.call(root.querySelectorAll('[data-flip]'));
+  }
+
+  function rectMap(nodes){
+    var m = new Map();
+    nodes.forEach(function(el){
+      var k = el.getAttribute('data-flip');
+      if(!k) return;
+      m.set(k, el.getBoundingClientRect());
+    });
+    return m;
+  }
+
+  function playFlip(prevRects, nodes, duration){
+    if(prefersReduced) return;
+    var ease = 'cubic-bezier(0.22, 1, 0.36, 1)';
+    nodes.forEach(function(el){
+      var k = el.getAttribute('data-flip');
+      var a = prevRects.get(k);
+      if(!a) return;
+      var b = el.getBoundingClientRect();
+      var dx = a.left - b.left;
+      var dy = a.top - b.top;
+      var sx = a.width ? (a.width / b.width) : 1;
+      var sy = a.height ? (a.height / b.height) : 1;
+      if(!isFinite(dx) || !isFinite(dy) || !isFinite(sx) || !isFinite(sy)) return;
+      el.style.transformOrigin = '0 0';
+      el.style.willChange = 'transform';
+      el.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(' + sx + ',' + sy + ')';
+      el.getBoundingClientRect();
+      el.style.transition = 'transform ' + duration + 'ms ' + ease;
+      el.style.transform = 'translate(0px,0px) scale(1,1)';
+      window.setTimeout(function(){
+        el.style.transition = '';
+        el.style.transformOrigin = '';
+        el.style.willChange = '';
+        el.style.transform = '';
+      }, duration + 30);
+    });
+  }
+
   function collapseC5(){
     root.querySelectorAll('.component-5').forEach(function(c5){
       c5.classList.remove('glance-c5--expanded');
@@ -5997,22 +6107,25 @@ body.tp-page .tp-components-host .footer, body.tp-page .tp-components-host .nav,
       return;
     }
     var btn=e.target.closest('.glance-advance-hit');
-    if(!btn)return;
+    if(!btn || !root.contains(btn))return;
+    if(playing) return;
     var step=parseInt(root.getAttribute('data-glance-step')||'1',10);
-    var to=parseInt(btn.getAttribute('data-advance-to')||'0',10);
-    var ok=(step===1&&to===2)||(step===2&&to===3)||(step===3&&to===1);
-    if(!ok)return;
+    if(step!==1) return;
+    playing = true;
     collapseC5();
-    root.setAttribute('data-glance-step',String(to));
-    if(to===1){
-      root.querySelectorAll('.glance-advance-hit').forEach(function(b){
-        b.removeAttribute('tabindex');
-        b.removeAttribute('aria-hidden');
+
+    function setStep(to, dur){
+      var nodes = qFlipNodes();
+      var prev = rectMap(nodes);
+      root.setAttribute('data-glance-step', String(to));
+      window.requestAnimationFrame(function(){
+        playFlip(prev, nodes, dur);
       });
-    }else{
-      btn.setAttribute('tabindex','-1');
-      btn.setAttribute('aria-hidden','true');
     }
+
+    setStep(2, 520);
+    window.setTimeout(function(){ setStep(3, 560); }, 520 + 120);
+    window.setTimeout(function(){ playing=false; }, 520 + 120 + 560 + 60);
   });
 })();
 </script>
